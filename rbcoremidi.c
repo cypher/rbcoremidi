@@ -30,7 +30,7 @@ static VALUE t_sources(VALUE self)
         CFStringRef pname;
         char name[64];
         
-        MIDIObjectGetStringProperty(src, kMIDIPropertyName, pname);
+        MIDIObjectGetStringProperty(src, kMIDIPropertyName, &pname);
         CFStringGetCString(pname, name, sizeof(name), 0);
         CFRelease(pname);
         
