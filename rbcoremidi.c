@@ -24,7 +24,8 @@ static VALUE t_sources(VALUE self)
     
     VALUE source_ary = rb_ary_new2(number_of_sources);
     
-    for(int idx = 0; idx < number_of_sources; ++idx)
+    int idx;
+    for(idx = 0; idx < number_of_sources; ++idx)
     {
         MIDIEndpointRef src = MIDIGetSource(idx);
         CFStringRef pname;
