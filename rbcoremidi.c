@@ -1,9 +1,6 @@
 /*
- *  rbcoremidi.c
- *  rbcoremidi
- *
- *  Created by cypher on 15.07.08.
- *  Copyright 2008 Nuclear Squid. All rights reserved.
+ *  Copyright 2008 Markus Prinz
+ *  Released unter an MIT licence
  *
  */
 
