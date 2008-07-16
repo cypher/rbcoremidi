@@ -5,8 +5,7 @@
  */
 
 #include <ruby.h>
-#include <CoreMIDI/CoreMIDI.h>
-
+#include <CoreMIDI/MIDIServices.h>
 
 VALUE callback_proc = Qnil;
 
