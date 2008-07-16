@@ -9,12 +9,16 @@
 /* Begin PBXBuildFile section */
 		4D72C0BC0B84E2BB002C6A25 /* rbcoremidi.c in Sources */ = {isa = PBXBuildFile; fileRef = 32BAE0B30371A71500C91783 /* rbcoremidi.c */; };
 		4D72C0BD0B84E2C0002C6A25 /* libruby.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D85FD710B84DF0F00CA65C8 /* libruby.dylib */; };
+		DC790F710E2E9E220094D9F8 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC790F700E2E9E220094D9F8 /* CoreMIDI.framework */; };
+		DC790F750E2E9E3F0094D9F8 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC790F740E2E9E3F0094D9F8 /* CoreServices.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		32BAE0B30371A71500C91783 /* rbcoremidi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rbcoremidi.c; sourceTree = "<group>"; };
 		4D72C0B50B84E26A002C6A25 /* rbcoremidi.bundle */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = rbcoremidi.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D85FD710B84DF0F00CA65C8 /* libruby.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libruby.dylib; path = /usr/lib/libruby.dylib; sourceTree = "<absolute>"; };
+		DC790F700E2E9E220094D9F8 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = /System/Library/Frameworks/CoreMIDI.framework; sourceTree = "<absolute>"; };
+		DC790F740E2E9E3F0094D9F8 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = /System/Library/Frameworks/CoreServices.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -23,6 +27,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				4D72C0BD0B84E2C0002C6A25 /* libruby.dylib in Frameworks */,
+				DC790F710E2E9E220094D9F8 /* CoreMIDI.framework in Frameworks */,
+				DC790F750E2E9E3F0094D9F8 /* CoreServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -32,6 +38,8 @@
 		089C166AFE841209C02AAC07 /* rbcoremidi */ = {
 			isa = PBXGroup;
 			children = (
+				DC790F740E2E9E3F0094D9F8 /* CoreServices.framework */,
+				DC790F700E2E9E220094D9F8 /* CoreMIDI.framework */,
 				08FB77ADFE841716C02AAC07 /* Source */,
 				089C1671FE841209C02AAC07 /* External Libraries */,
 				19C28FB4FE9D528D11CA2CBB /* Products */,
