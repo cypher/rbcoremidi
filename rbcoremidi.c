@@ -5,9 +5,18 @@
  */
 
 #include <ruby.h>
+#include <CoreMIDI/CoreMIDI.h>
 
 
-VALUE crbCoreMidi;
+VALUE callback_proc = Qnil;
+
+MIDIPortRef inPort = NULL;
+MIDIClientRef client = NULL;
+
+static void RbMIDIReadProc(const MIDIPacketList* packetList, void* readProcRefCon, void* srcConnRefCon)
+{
+    
+}
 
 void Init_rbcoremidi (void)
 {
