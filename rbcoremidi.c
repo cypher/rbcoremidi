@@ -67,12 +67,12 @@ static VALUE t_get_num_sources(VALUE self)
 VALUE mCoreMIDI = Qnil;
 VALUE mCoreMIDIAPI = Qnil;
 
-void Init_rbcoremidi (void)
+void Init_rbcoremidi()
 {
     mCoreMIDI = rb_define_module("CoreMIDI");
-    mCoreMIDIAPI = rb_define_module_under(cCoreMIDI, "API");
+    mCoreMIDIAPI = rb_define_module_under(mCoreMIDI, "API");
     
-    rb_define_method(mCoreMIDIAPI, "create_input_port", t_create_input_port, 3);
-    rb_define_method(mCoreMIDIAPI, "get_sources", t_get_sources, 0);
-    rb_define_method(mCoreMIDIAPI, "get_num_sources", t_get_num_sources, 0);
+    rb_define_singleton_method(mCoreMIDIAPI, "create_input_port", t_create_input_port, 3);
+    rb_define_singleton_method(mCoreMIDIAPI, "get_sources", t_get_sources, 0);
+    rb_define_singleton_method(mCoreMIDIAPI, "get_num_sources", t_get_num_sources, 0);
 }
