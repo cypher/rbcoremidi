@@ -36,7 +36,7 @@ static VALUE t_create_input_port(VALUE self, VALUE client_name, VALUE port_name,
 }
 
 // Return an array of all available sources, filled with the names of the sources
-static VALUE t_sources(VALUE self)
+static VALUE t_get_sources(VALUE self)
 {    
     int number_of_sources = MIDIGetNumberOfSources();
     
