@@ -40,6 +40,11 @@ static VALUE t_sources(VALUE self)
     return source_ary;
 }
 
+static VALUE t_get_num_sources(VALUE self)
+{
+    return INT2FIX(MIDIGetNumberOfSources());
+}
+
 void Init_rbcoremidi (void)
 {
   // Add the initialization code of your module here.
