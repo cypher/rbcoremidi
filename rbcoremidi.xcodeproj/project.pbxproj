@@ -19,6 +19,7 @@
 		4D85FD710B84DF0F00CA65C8 /* libruby.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libruby.dylib; path = /usr/lib/libruby.dylib; sourceTree = "<absolute>"; };
 		DC790F700E2E9E220094D9F8 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = /System/Library/Frameworks/CoreMIDI.framework; sourceTree = "<absolute>"; };
 		DC790F740E2E9E3F0094D9F8 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = /System/Library/Frameworks/CoreServices.framework; sourceTree = "<absolute>"; };
+		DC790FCE0E2F801C0094D9F8 /* rbcoremidi.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = rbcoremidi.rb; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -38,6 +39,7 @@
 		089C166AFE841209C02AAC07 /* rbcoremidi */ = {
 			isa = PBXGroup;
 			children = (
+				DC790FCE0E2F801C0094D9F8 /* rbcoremidi.rb */,
 				DC790F740E2E9E3F0094D9F8 /* CoreServices.framework */,
 				DC790F700E2E9E220094D9F8 /* CoreMIDI.framework */,
 				08FB77ADFE841716C02AAC07 /* Source */,
