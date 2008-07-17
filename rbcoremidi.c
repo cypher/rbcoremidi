@@ -15,6 +15,7 @@ MIDIClientRef midi_client = NULL;
 // The callback function that we'll eventually supply to MIDIInputPortCreate
 static void RbMIDIReadProc(const MIDIPacketList* packetList, void* readProcRefCon, void* srcConnRefCon)
 {
+    // Nothing to see here (yet)
     
 }
 
@@ -34,6 +35,7 @@ static VALUE t_create_input_port(VALUE self, VALUE client_name, VALUE port_name,
     return Qtrue;
 }
 
+// Return an array of all available sources, filled with the names of the sources
 static VALUE t_sources(VALUE self)
 {    
     int number_of_sources = MIDIGetNumberOfSources();
