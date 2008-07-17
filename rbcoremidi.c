@@ -64,12 +64,12 @@ static VALUE t_get_num_sources(VALUE self)
     return INT2FIX(MIDIGetNumberOfSources());
 }
 
-VALUE cCoreMIDI = Qnil;
+VALUE mCoreMIDI = Qnil;
 VALUE mCoreMIDIAPI = Qnil;
 
 void Init_rbcoremidi (void)
 {
-    cCoreMIDI = rb_define_class("CoreMIDI", rb_cObject);
+    mCoreMIDI = rb_define_module("CoreMIDI");
     mCoreMIDIAPI = rb_define_module_under(cCoreMIDI, "API");
     
     rb_define_method(mCoreMIDIAPI, "create_input_port", t_create_input_port, 3);
