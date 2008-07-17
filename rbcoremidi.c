@@ -45,7 +45,14 @@ static VALUE t_get_num_sources(VALUE self)
     return INT2FIX(MIDIGetNumberOfSources());
 }
 
+VALUE cCoreMIDI = Qnil;
+VALUE mCoreMIDIAPI = Qnil;
+
 void Init_rbcoremidi (void)
 {
-  // Add the initialization code of your module here.
+    cCoreMIDI = rb_define_class("CoreMIDI", rb_cObject);
+    mCoreMIDIAPI = rb_define_module_under(cCoreMIDI, "API");
+    
+    rb_define_method(mCoreMIDIAPI, "get_sources", t_get_sources, 0);
+    rb_define_method(mCoreMIDIAPI, "get_num_sources", t_get_num_sources, 0);
 }
