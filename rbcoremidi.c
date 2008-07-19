@@ -16,7 +16,7 @@ MIDIClientRef midi_client = NULL;
 
 pthread_mutex_t mutex;
 
-CFMutableArrayRef midi_data;
+CFMutableArrayRef midi_data = NULL;
 
 // The callback function that we'll eventually supply to MIDIInputPortCreate
 static void RbMIDIReadProc(const MIDIPacketList* packetList, void* readProcRefCon, void* srcConnRefCon)
@@ -104,7 +104,7 @@ static void free_objects()
 {
     pthread_mutex_destroy(&mutex);
     
-    CFRelease(midi_data);
+    if( midi_data != NULL) CFRelease(midi_data);
 }
 
 VALUE mCoreMIDI = Qnil;
@@ -123,13 +123,14 @@ void Init_rbcoremidi()
     
     if( midi_data == NULL )
     {
-        pthread_mutex_destroy(&mutex);
+        free_objects();
         rb_sys_fail("Failed to allocate CFMutableArray");
     }
     
     // Poor Ruby programmers destructor
     if( atexit(free_objects) != 0 )
     {
+        free_objects();
         rb_sys_fail("Failed to register atexit function");
     }
     
