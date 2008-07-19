@@ -140,4 +140,5 @@ void Init_rbcoremidi()
     rb_define_singleton_method(mCoreMIDIAPI, "create_input_port", t_create_input_port, 3);
     rb_define_singleton_method(mCoreMIDIAPI, "get_sources", t_get_sources, 0);
     rb_define_singleton_method(mCoreMIDIAPI, "get_num_sources", t_get_num_sources, 0);
+    rb_define_singleton_method(mCoreMIDIAPI, "check_for_new_data", t_check_for_new_data, 0);
 }
