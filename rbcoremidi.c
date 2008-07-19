@@ -7,6 +7,7 @@
 #include <ruby.h>
 #include <CoreMIDI/MIDIServices.h>
 #include <pthread.h>
+#include <stdlib.h>
 
 VALUE callback_proc = Qnil;
 
@@ -97,6 +98,11 @@ static VALUE t_get_num_sources(VALUE self)
     return INT2FIX(MIDIGetNumberOfSources());
 }
 
+static void free_objects()
+{
+    pthread_mutex_destroy(&mutex);
+}
+
 VALUE mCoreMIDI = Qnil;
 VALUE mCoreMIDIAPI = Qnil;
 
@@ -107,6 +113,12 @@ void Init_rbcoremidi()
     if( mutex_init_result != 0 )
     {
         rb_sys_fail("Failed to allocate mutex");
+    }
+    
+    // Poor Ruby programmers destructor
+    if( atexit(free_objects) != 0 )
+    {
+        rb_sys_fail("Failed to register atexit function");
     }
     
     mCoreMIDI = rb_define_module("CoreMIDI");
