@@ -6,17 +6,50 @@
 
 #include <ruby.h>
 #include <CoreMIDI/MIDIServices.h>
+#include <pthread.h>
 
 VALUE callback_proc = Qnil;
 
 MIDIPortRef inPort = NULL;
 MIDIClientRef midi_client = NULL;
 
+pthread_mutex_t mutex;
+
 // The callback function that we'll eventually supply to MIDIInputPortCreate
 static void RbMIDIReadProc(const MIDIPacketList* packetList, void* readProcRefCon, void* srcConnRefCon)
 {
-    // Nothing to see here (yet)
+    pthread_mutex_lock(&mutex);
     
+    /*
+     MIDIPacket *packet = (MIDIPacket *)pktlist->packet;	// remove const (!)
+     for (unsigned int j = 0; j < pktlist->numPackets; ++j) {
+     for (int i = 0; i < packet->length; ++i) {
+     //				printf("%02X ", packet->data[i]);
+     
+     // rechannelize status bytes
+     if (packet->data[i] >= 0x80 && packet->data[i] < 0xF0)
+     packet->data[i] = (packet->data[i] & 0xF0) | gChannel;
+     }
+     
+     //			printf("\n");
+     packet = MIDIPacketNext(packet);
+     */
+    
+    pthread_mutex_unlock(&mutex);
+}
+
+static VALUE t_check_for_new_data(VALUE self)
+{
+    if( pthread_mutex_trylock(&mutex) != 0 )
+    {
+        // no data for us yet
+        return Qfalse;
+    }
+    
+    
+    pthread_mutex_unlock(&mutex);
+    
+    return Qtrue;
 }
 
 // Create a new Input Port and saves the Ruby Callback proc.
@@ -69,6 +102,13 @@ VALUE mCoreMIDIAPI = Qnil;
 
 void Init_rbcoremidi()
 {
+    int mutex_init_result = pthread_mutex_init(&mutex, NULL);
+    
+    if( mutex_init_result != 0 )
+    {
+        rb_sys_fail("Failed to allocate mutex");
+    }
+    
     mCoreMIDI = rb_define_module("CoreMIDI");
     mCoreMIDIAPI = rb_define_module_under(mCoreMIDI, "API");
     
