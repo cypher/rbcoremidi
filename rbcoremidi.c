@@ -18,25 +18,55 @@ pthread_mutex_t mutex;
 
 CFMutableArrayRef midi_data = NULL;
 
+// We need our own data structure since MIDIPacket defines data to be a 256 byte array,
+// even though it can be larger than that
+typedef struct RbMIDIPacket_t {
+    MIDITimeStamp timeStamp;
+    UInt16 length;
+    Byte* data;
+} RbMIDIPacket;
+
 // The callback function that we'll eventually supply to MIDIInputPortCreate
 static void RbMIDIReadProc(const MIDIPacketList* packetList, void* readProcRefCon, void* srcConnRefCon)
 {
-    pthread_mutex_lock(&mutex);
+    if( pthread_mutex_lock(&mutex) != 0 )
+    {
+        // uh oh
+        // Not much we can do
+        return;
+    }
     
-    /*
-     MIDIPacket *packet = (MIDIPacket *)pktlist->packet;	// remove const (!)
-     for (unsigned int j = 0; j < pktlist->numPackets; ++j) {
-     for (int i = 0; i < packet->length; ++i) {
-     //				printf("%02X ", packet->data[i]);
-     
-     // rechannelize status bytes
-     if (packet->data[i] >= 0x80 && packet->data[i] < 0xF0)
-     packet->data[i] = (packet->data[i] & 0xF0) | gChannel;
-     }
-     
-     //			printf("\n");
-     packet = MIDIPacketNext(packet);
-     */
+    MIDIPacket* current_packet = (MIDIPacket*) packetList->packet;
+
+    unsigned int j;
+    for( j = 0; j < packetList->numPackets; ++j )
+    {
+        RbMIDIPacket* rb_packet = (RbMIDIPacket*) malloc( sizeof(RbMIDIPacket) );
+        
+        if( rb_packet == NULL )
+        {
+            fprintf(stderr, "Failed to allocate memory for RbMIDIPacket!\n");
+            abort();
+        }
+        
+        rb_packet->timeStamp = current_packet->timeStamp;
+        rb_packet->length = current_packet->length;
+        
+        size_t size = sizeof(Byte) * rb_packet->length;
+        rb_packet->data = (Byte*) malloc( size );
+        
+        if( rb_packet->data == NULL )
+        {
+            fprintf(stderr, "Failed to allocate memory for RbMIDIPacket data!\n");
+            abort();
+        }
+        
+        memcpy(rb_packet->data, current_packet->data, size);
+        
+        CFArrayAppendValue(midi_data, rb_packet);
+        
+        current_packet = MIDIPacketNext(current_packet);
+    }
     
     pthread_mutex_unlock(&mutex);
 }
