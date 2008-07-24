@@ -175,7 +175,19 @@ static void free_objects()
 {
     pthread_mutex_destroy(&mutex);
     
-    if( midi_data != NULL) CFRelease(midi_data);
+    if( midi_data != NULL )
+    {
+        if( CFArrayGetCount(midi_data) > 0 )
+        {
+            int i;
+            for( i = 0; i < CFArrayGetCount(midi_data); ++i )
+            {
+                free(((const RbMIDIPacket*) CFArrayGetValueAtIndex(midi_data, i))->data);
+            }
+        }
+        
+        CFRelease(midi_data);
+    }
 }
 
 void Init_rbcoremidi()
