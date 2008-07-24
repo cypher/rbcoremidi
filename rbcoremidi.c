@@ -71,7 +71,8 @@ static void RbMIDIReadProc(const MIDIPacketList* packetList, void* readProcRefCo
     pthread_mutex_unlock(&mutex);
 }
 
-static VALUE t_check_for_new_data(VALUE self)
+// Checks for new data and copies it over if there is some.
+static VALUE t_check_for_and_copy_new_data(VALUE self)
 {
     if( pthread_mutex_trylock(&mutex) != 0 )
     {
@@ -170,5 +171,5 @@ void Init_rbcoremidi()
     rb_define_singleton_method(mCoreMIDIAPI, "create_input_port", t_create_input_port, 3);
     rb_define_singleton_method(mCoreMIDIAPI, "get_sources", t_get_sources, 0);
     rb_define_singleton_method(mCoreMIDIAPI, "get_num_sources", t_get_num_sources, 0);
-    rb_define_singleton_method(mCoreMIDIAPI, "check_for_new_data", t_check_for_new_data, 0);
+    rb_define_singleton_method(mCoreMIDIAPI, "check_for_and_copy_new_data", t_check_for_and_copy_new_data, 0);
 }
