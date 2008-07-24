@@ -113,7 +113,7 @@ static VALUE t_check_for_and_copy_new_data(VALUE self)
         midi_packet_args[0] = ULL2NUM(current_packet->timeStamp);
         midi_packet_args[1] = byte_array;
         
-        rb_ary_push(rb_midi_data, rb_class_new_instance(sizeof(midi_packet_args), midi_packet_args, cMidiPacket));
+        rb_ary_push(rb_midi_data, rb_class_new_instance((sizeof(midi_packet_args)/sizeof(midi_packet_args[0])), midi_packet_args, cMidiPacket));
         
         // While we're at it..
         // Free the memory! Save the whales!
