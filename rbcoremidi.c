@@ -18,6 +18,9 @@ pthread_mutex_t mutex;
 
 CFMutableArrayRef midi_data = NULL;
 
+VALUE mCoreMIDI = Qnil;
+VALUE mCoreMIDIAPI = Qnil;
+
 // We need our own data structure since MIDIPacket defines data to be a 256 byte array,
 // even though it can be larger than that
 typedef struct RbMIDIPacket_t {
@@ -80,8 +83,45 @@ static VALUE t_check_for_and_copy_new_data(VALUE self)
         return Qfalse;
     }
     
+    // Switch out the arrays. Possibly evil
+    CFArrayRef data = midi_data;
+    midi_data = CFArrayCreateMutable(kCFAllocatorDefault, 0, NULL);
     
     pthread_mutex_unlock(&mutex);
+    
+    // We'll use a Struct to store the data
+    VALUE cMidiPacket = rb_const_get(mCoreMIDIAPI, rb_intern("MidiPacket"));
+    
+    VALUE rb_midi_data = rb_iv_get(self, "@midi_data");
+    
+    CFIndex idx = 0;
+    CFIndex array_size = CFArrayGetCount(midi_data);
+    const RbMIDIPacket* current_packet = NULL;
+    
+    for( ; idx < array_size; ++idx ) {
+        current_packet = (const RbMIDIPacket*) CFArrayGetValueAtIndex(data, idx);
+        
+        VALUE byte_array = rb_ary_new2(current_packet->length);
+        
+        int i;
+        for (i = 0; i < current_packet->length; ++i) {
+            rb_ary_push(byte_array, INT2FIX(current_packet->data[i]));
+        }
+        
+        VALUE midi_packet_args[2];
+        // relies on sizeof(MIDITimeStamp) == sizeof(unsigned long long)
+        midi_packet_args[0] = ULL2NUM(current_packet->timeStamp);
+        midi_packet_args[1] = byte_array;
+        
+        rb_ary_push(rb_midi_data, rb_class_new_instance(sizeof(midi_packet_args), midi_packet_args, cMidiPacket));
+        
+        // While we're at it..
+        // Free the memory! Save the whales!
+        free(current_packet->data);
+    }
+    
+    // Free the memory! Save the whales! Part 2!
+    CFRelease(data);
     
     return Qtrue;
 }
@@ -138,9 +178,6 @@ static void free_objects()
     if( midi_data != NULL) CFRelease(midi_data);
 }
 
-VALUE mCoreMIDI = Qnil;
-VALUE mCoreMIDIAPI = Qnil;
-
 void Init_rbcoremidi()
 {
     int mutex_init_result = pthread_mutex_init(&mutex, NULL);
@@ -172,4 +209,7 @@ void Init_rbcoremidi()
     rb_define_singleton_method(mCoreMIDIAPI, "get_sources", t_get_sources, 0);
     rb_define_singleton_method(mCoreMIDIAPI, "get_num_sources", t_get_num_sources, 0);
     rb_define_singleton_method(mCoreMIDIAPI, "check_for_and_copy_new_data", t_check_for_and_copy_new_data, 0);
+    
+    VALUE rb_midi_data = rb_ary_new();
+    rb_iv_set(mCoreMIDIAPI, "@midi_data", rb_midi_data);
 }

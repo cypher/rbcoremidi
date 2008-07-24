@@ -2,6 +2,10 @@
 require 'rbcoremidi.bundle'
 
 module CoreMIDI
+  module API
+    MidiPacket = Struct.new(:timestamp, :data)
+  end
+  
   def self.sources
     API.get_sources
   end
