@@ -247,7 +247,7 @@ static VALUE t_disconnect_source_from_port(VALUE self, VALUE source_idx, VALUE i
     
     MIDIEndpointRef source = MIDIGetSource(FIX2INT(source_idx));
     
-    MIDIPortDisconnectSource(port->input_port, source, NULL);
+    MIDIPortDisconnectSource(port->input_port, source);
     
     return Qtrue;
 }
@@ -384,12 +384,12 @@ void Init_rbcoremidi()
     rb_define_singleton_method(mCoreMIDIAPI, "check_for_and_copy_new_data", t_check_for_and_copy_new_data, 0);
 
     // Define CoreMIDI::API::InputPort class
-    cInputPort = rb_define_class("InputPort", mCoreMIDIAPI);
+    cInputPort = rb_define_class_under(mCoreMIDIAPI, "InputPort", rb_cObject);
     rb_define_alloc_func(cInputPort, inputport_alloc);
     rb_define_method(cInputPort, "initialize", inputport_initialize, 0);
     
     // Define CoreMIDI::API::MIDIClient class
-    cMIDIClient = rb_define_class("MIDIClient", mCoreMIDIAPI);
+    cMIDIClient = rb_define_class_under(mCoreMIDIAPI, "MIDIClient", rb_cObject);
     rb_define_alloc_func(cMIDIClient, midiclient_alloc);
     rb_define_method(cMIDIClient, "initialize", midiclient_initialize, 0);
     
