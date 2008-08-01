@@ -224,6 +224,20 @@ static VALUE t_get_num_sources(VALUE self)
     return INT2FIX(MIDIGetNumberOfSources());
 }
 
+// source is identified by the index in the array returned by get_sources
+// input_port is an InputPort class
+static VALUE t_connect_source_to_port(VALUE self, VALUE source_idx, VALUE input_port)
+{
+    RbInputPort* port;
+    Data_Get_Struct(input_port, RbInputPort, port);
+    
+    MIDIEndpointRef source = MIDIGetSource(FIX2INT(source_idx));
+    
+    MIDIPortConnectSource(port->input_port, source, NULL);
+    
+    return Qtrue;
+}
+
 /*
  *
  * RbInputPort related methods
@@ -351,6 +365,7 @@ void Init_rbcoremidi()
     rb_define_singleton_method(mCoreMIDIAPI, "create_client", t_create_client, 1);
     rb_define_singleton_method(mCoreMIDIAPI, "get_sources", t_get_sources, 0);
     rb_define_singleton_method(mCoreMIDIAPI, "get_num_sources", t_get_num_sources, 0);
+    rb_define_singleton_method(mCoreMIDIAPI, "connect_source_to_port", t_connect_source_to_port, 2);
     rb_define_singleton_method(mCoreMIDIAPI, "check_for_and_copy_new_data", t_check_for_and_copy_new_data, 0);
 
     // Define CoreMIDI::API::InputPort class
