@@ -14,9 +14,8 @@ module CoreMIDI
   end
   
   # Returns an instance of InputPort
-  def self.create_input_port(client, port_name, &proc)
-    # AFAIK this is the only way to pass the proc to a C function
-    API.create_input_port(client, port_name, proc)
+  def self.create_input_port(client, port_name)
+    API.create_input_port(client, port_name)
   end
 
   def self.sources

@@ -9,8 +9,6 @@
 #include <pthread.h>
 #include <stdlib.h>
 
-VALUE callback_proc = Qnil;
-
 pthread_mutex_t mutex;
 
 CFMutableArrayRef midi_data = NULL;
@@ -167,7 +165,7 @@ static VALUE t_create_client(VALUE self, VALUE client_name)
 }
 
 // Create a new Input Port and saves the Ruby Callback proc.
-static VALUE t_create_input_port(VALUE self, VALUE client_instance, VALUE port_name, VALUE proc)
+static VALUE t_create_input_port(VALUE self, VALUE client_instance, VALUE port_name)
 {
     MIDIPortRef in_port;
     
@@ -177,8 +175,6 @@ static VALUE t_create_input_port(VALUE self, VALUE client_instance, VALUE port_n
     CFStringRef port_str = CFStringCreateWithCString(kCFAllocatorDefault, RSTRING(port_name)->ptr, kCFStringEncodingASCII);
     MIDIInputPortCreate(client->client, port_str, RbMIDIReadProc, NULL, &in_port);
     CFRelease(port_str);
-    
-    callback_proc = proc;
     
     VALUE inputport_instance = rb_class_new_instance(0, 0, cInputPort);
     if( inputport_instance == Qnil )
@@ -375,7 +371,7 @@ void Init_rbcoremidi()
     mCoreMIDI = rb_define_module("CoreMIDI");
     mCoreMIDIAPI = rb_define_module_under(mCoreMIDI, "API");
     
-    rb_define_singleton_method(mCoreMIDIAPI, "create_input_port", t_create_input_port, 3);
+    rb_define_singleton_method(mCoreMIDIAPI, "create_input_port", t_create_input_port, 2);
     rb_define_singleton_method(mCoreMIDIAPI, "create_client", t_create_client, 1);
     rb_define_singleton_method(mCoreMIDIAPI, "get_sources", t_get_sources, 0);
     rb_define_singleton_method(mCoreMIDIAPI, "get_num_sources", t_get_num_sources, 0);
