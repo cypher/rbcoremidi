@@ -18,8 +18,11 @@ module CoreMIDI
     API.create_input_port(client, port_name)
   end
   
-  def new_data
-    API.check_for_new_data
+  def new_data?
+    data = API.check_for_new_data
+    
+    return nil if data.empty?
+    data
   end
 
   def self.sources
