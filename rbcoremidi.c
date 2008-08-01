@@ -11,7 +11,6 @@
 
 VALUE callback_proc = Qnil;
 
-MIDIPortRef inPort = NULL;
 MIDIClientRef midi_client = NULL;
 
 pthread_mutex_t mutex;
@@ -21,6 +20,8 @@ CFMutableArrayRef midi_data = NULL;
 VALUE mCoreMIDI = Qnil;
 VALUE mCoreMIDIAPI = Qnil;
 
+VALUE cInputPort = Qnil;
+
 // We need our own data structure since MIDIPacket defines data to be a 256 byte array,
 // even though it can be larger than that
 typedef struct RbMIDIPacket_t {
@@ -28,6 +29,11 @@ typedef struct RbMIDIPacket_t {
     UInt16 length;
     Byte* data;
 } RbMIDIPacket;
+
+// A struct that contains the input port
+typedef struct RbInputPort_t {
+    MIDIPortRef input_port;
+} RbInputPort;
 
 // Forward declare free_objects
 static void free_objects();
@@ -180,6 +186,34 @@ static VALUE t_get_num_sources(VALUE self)
 
 /*
  *
+ * RbInputPort related methods
+ *
+ */
+
+static void inputport_free(void* ptr)
+{
+    if( ptr != NULL)
+        free(ptr);
+}
+
+static VALUE inputport_alloc(VALUE klass)
+{
+    RbInputPort* port = (RbInputPort*) malloc(sizeof(RbInputPort));
+    port->input_port = NULL;
+    
+    VALUE obj;
+    obj = Data_Wrap_Struct(klass, 0, inputport_free, port);
+    
+    return obj;
+}
+
+static VALUE inputport_initialize(VALUE self)
+{
+    return self;
+}
+
+/*
+ *
  * util methods
  *
  */
@@ -249,6 +283,11 @@ void Init_rbcoremidi()
     rb_define_singleton_method(mCoreMIDIAPI, "get_sources", t_get_sources, 0);
     rb_define_singleton_method(mCoreMIDIAPI, "get_num_sources", t_get_num_sources, 0);
     rb_define_singleton_method(mCoreMIDIAPI, "check_for_and_copy_new_data", t_check_for_and_copy_new_data, 0);
+
+    // Define CoreMIDI::API::InputPort class
+    cInputPort = rb_define_class("InputPort", mCoreMIDIAPI);
+    rb_define_alloc_func(cInputPort, inputport_alloc);
+    rb_define_method(cInputPort, "initialize", inputport_initialize, 0);
     
     VALUE rb_midi_data = rb_ary_new();
     rb_iv_set(mCoreMIDIAPI, "@midi_data", rb_midi_data);
