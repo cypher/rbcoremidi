@@ -101,18 +101,22 @@ static VALUE t_check_for_and_copy_new_data(VALUE self)
     CFIndex array_size = CFArrayGetCount(midi_data);
     const RbMIDIPacket* current_packet = NULL;
     
-    for( ; idx < array_size; ++idx ) {
+    for( ; idx < array_size; ++idx ) 
+    {
         current_packet = (const RbMIDIPacket*) CFArrayGetValueAtIndex(data, idx);
         
         VALUE byte_array = rb_ary_new2(current_packet->length);
         
         int i;
-        for (i = 0; i < current_packet->length; ++i) {
+        for (i = 0; i < current_packet->length; ++i) 
+        {
             rb_ary_push(byte_array, INT2FIX(current_packet->data[i]));
         }
         
-        VALUE midi_packet_args[2];
         // relies on sizeof(MIDITimeStamp) == sizeof(unsigned long long)
+        assert(sizeof(MIDITimeStamp) == sizeof(unsigned long long));
+        
+        VALUE midi_packet_args[2];
         midi_packet_args[0] = ULL2NUM(current_packet->timeStamp);
         midi_packet_args[1] = byte_array;
         
@@ -174,6 +178,12 @@ static VALUE t_get_num_sources(VALUE self)
     return INT2FIX(MIDIGetNumberOfSources());
 }
 
+/*
+ *
+ * util methods
+ *
+ */
+
 static void free_objects()
 {
     pthread_mutex_destroy(&mutex);
@@ -193,7 +203,7 @@ static void free_objects()
     }
 }
 
-void Init_rbcoremidi()
+static void init_mutex()
 {
     int mutex_init_result = pthread_mutex_init(&mutex, NULL);
     
@@ -201,7 +211,10 @@ void Init_rbcoremidi()
     {
         rb_sys_fail("Failed to allocate mutex");
     }
-    
+}
+
+static void init_midi_data()
+{
     midi_data = CFArrayCreateMutable(kCFAllocatorDefault, 0, NULL);
     
     if( midi_data == NULL )
@@ -209,13 +222,25 @@ void Init_rbcoremidi()
         free_objects();
         rb_sys_fail("Failed to allocate CFMutableArray");
     }
-    
+}
+
+static void install_at_exit_handler()
+{
     // Poor Ruby programmers destructor
     if( atexit(free_objects) != 0 )
     {
         free_objects();
         rb_sys_fail("Failed to register atexit function");
     }
+}
+
+void Init_rbcoremidi()
+{
+    init_mutex();
+    
+    init_midi_data();
+    
+    install_at_exit_handler();
     
     mCoreMIDI = rb_define_module("CoreMIDI");
     mCoreMIDIAPI = rb_define_module_under(mCoreMIDI, "API");
