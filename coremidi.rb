@@ -6,16 +6,32 @@ module CoreMIDI
     MidiPacket = Struct.new(:timestamp, :data)
   end
   
+  # Returns an instance of MIDIClient
+  def self.create_client(name)
+    raise "name must be a String!" unless name.class == String
+    
+    API.create_client(name)
+  end
+  
+  # Returns an instance of InputPort
+  def self.create_input_port(client, port_name, &proc)
+    # AFAIK this is the only way to pass the proc to a C function
+    API.create_input_port(client, port_name, proc)
+  end
+
   def self.sources
     API.get_sources
   end
-  
+
   def self.number_of_sources
     API.get_num_sources
   end
   
-  def self.create_input_port(client_name, port_name, &proc)
-    # AFAIK this is the only way to pass the proc to a C function
-    API.create_input_port(client_name, port_name, proc)
+  def connect_source_to_port(source, port)
+    API.connect_source_to_port(source, port)
+  end
+  
+  def disconnect_source_to_port(source, port)
+    API.disconnect_source_to_port(source, port)
   end
 end
