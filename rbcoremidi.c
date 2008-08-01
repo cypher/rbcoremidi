@@ -86,7 +86,7 @@ static void RbMIDIReadProc(const MIDIPacketList* packetList, void* readProcRefCo
 }
 
 // Checks for new data and copies it over if there is some.
-static VALUE t_check_for_and_copy_new_data(VALUE self)
+static VALUE t_check_for_new_data(VALUE self)
 {
     if( pthread_mutex_trylock(&mutex) != 0 )
     {
@@ -100,10 +100,10 @@ static VALUE t_check_for_and_copy_new_data(VALUE self)
     
     pthread_mutex_unlock(&mutex);
     
-    // We'll use a Struct to store the data
+    // We'll use a Ruby Struct to store the data
     VALUE cMidiPacket = rb_const_get(mCoreMIDIAPI, rb_intern("MidiPacket"));
     
-    VALUE rb_midi_data = rb_iv_get(self, "@midi_data");
+    VALUE rb_midi_data = rb_ary_new();
     
     CFIndex idx = 0;
     CFIndex array_size = CFArrayGetCount(midi_data);
@@ -138,7 +138,7 @@ static VALUE t_check_for_and_copy_new_data(VALUE self)
     // Free the memory! Save the whales! Part 2!
     CFRelease(data);
     
-    return Qtrue;
+    return rb_midi_data;
 }
 
 static VALUE t_create_client(VALUE self, VALUE client_name)
@@ -377,7 +377,7 @@ void Init_rbcoremidi()
     rb_define_singleton_method(mCoreMIDIAPI, "get_num_sources", t_get_num_sources, 0);
     rb_define_singleton_method(mCoreMIDIAPI, "connect_source_to_port", t_connect_source_to_port, 2);
     rb_define_singleton_method(mCoreMIDIAPI, "disconnect_source_from_port", t_disconnect_source_from_port, 2);
-    rb_define_singleton_method(mCoreMIDIAPI, "check_for_and_copy_new_data", t_check_for_and_copy_new_data, 0);
+    rb_define_singleton_method(mCoreMIDIAPI, "check_for_new_data", t_check_for_new_data, 0);
 
     // Define CoreMIDI::API::InputPort class
     cInputPort = rb_define_class_under(mCoreMIDIAPI, "InputPort", rb_cObject);
@@ -388,7 +388,4 @@ void Init_rbcoremidi()
     cMIDIClient = rb_define_class_under(mCoreMIDIAPI, "MIDIClient", rb_cObject);
     rb_define_alloc_func(cMIDIClient, midiclient_alloc);
     rb_define_method(cMIDIClient, "initialize", midiclient_initialize, 0);
-    
-    VALUE rb_midi_data = rb_ary_new();
-    rb_iv_set(mCoreMIDIAPI, "@midi_data", rb_midi_data);
 }

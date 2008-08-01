@@ -17,6 +17,10 @@ module CoreMIDI
   def self.create_input_port(client, port_name)
     API.create_input_port(client, port_name)
   end
+  
+  def new_data
+    API.check_for_new_data
+  end
 
   def self.sources
     API.get_sources
