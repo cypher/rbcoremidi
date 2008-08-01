@@ -29,6 +29,9 @@ typedef struct RbMIDIPacket_t {
     Byte* data;
 } RbMIDIPacket;
 
+// Forward declare free_objects
+static void free_objects();
+
 // The callback function that we'll eventually supply to MIDIInputPortCreate
 static void RbMIDIReadProc(const MIDIPacketList* packetList, void* readProcRefCon, void* srcConnRefCon)
 {
