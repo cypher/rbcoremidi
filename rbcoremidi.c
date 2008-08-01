@@ -11,8 +11,6 @@
 
 VALUE callback_proc = Qnil;
 
-MIDIClientRef midi_client = NULL;
-
 pthread_mutex_t mutex;
 
 CFMutableArrayRef midi_data = NULL;
@@ -21,6 +19,7 @@ VALUE mCoreMIDI = Qnil;
 VALUE mCoreMIDIAPI = Qnil;
 
 VALUE cInputPort = Qnil;
+VALUE cMIDIClient = Qnil;
 
 // We need our own data structure since MIDIPacket defines data to be a 256 byte array,
 // even though it can be larger than that
@@ -34,6 +33,11 @@ typedef struct RbMIDIPacket_t {
 typedef struct RbInputPort_t {
     MIDIPortRef input_port;
 } RbInputPort;
+
+// A struct that contains the midi client
+typedef struct RbMIDIClient_t {
+    MIDIClientRef client;
+} RbMIDIClient;
 
 // Forward declare free_objects
 static void free_objects();
@@ -214,6 +218,34 @@ static VALUE inputport_initialize(VALUE self)
 
 /*
  *
+ * RbMIDIClient related methods
+ *
+ */
+
+static void midiclient_free(void* ptr)
+{
+    if( ptr != NULL)
+        free(ptr);
+}
+
+static VALUE midiclient_alloc(VALUE klass)
+{
+    RbMIDIClient* client = (RbMIDIClient*) malloc(sizeof(RbMIDIClient));
+    client->client = NULL;
+    
+    VALUE obj;
+    obj = Data_Wrap_Struct(klass, 0, midiclient_free, client);
+    
+    return obj;
+}
+
+static VALUE midiclient_initialize(VALUE self)
+{
+    return self;
+}
+
+/*
+ *
  * util methods
  *
  */
@@ -288,6 +320,11 @@ void Init_rbcoremidi()
     cInputPort = rb_define_class("InputPort", mCoreMIDIAPI);
     rb_define_alloc_func(cInputPort, inputport_alloc);
     rb_define_method(cInputPort, "initialize", inputport_initialize, 0);
+    
+    // Define CoreMIDI::API::MIDIClient class
+    cMIDIClient = rb_define_class("MIDIClient", mCoreMIDIAPI);
+    rb_define_alloc_func(cMIDIClient, midiclient_alloc);
+    rb_define_method(cMIDIClient, "initialize", midiclient_initialize, 0);
     
     VALUE rb_midi_data = rb_ary_new();
     rb_iv_set(mCoreMIDIAPI, "@midi_data", rb_midi_data);
