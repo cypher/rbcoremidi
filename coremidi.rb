@@ -30,7 +30,7 @@ module CoreMIDI
     API.connect_source_to_port(source, port)
   end
   
-  def disconnect_source_to_port(source, port)
-    API.disconnect_source_to_port(source, port)
+  def disconnect_source_from_port(source, port)
+    API.disconnect_source_from_port(source, port)
   end
 end

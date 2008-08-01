@@ -376,7 +376,7 @@ void Init_rbcoremidi()
     rb_define_singleton_method(mCoreMIDIAPI, "get_sources", t_get_sources, 0);
     rb_define_singleton_method(mCoreMIDIAPI, "get_num_sources", t_get_num_sources, 0);
     rb_define_singleton_method(mCoreMIDIAPI, "connect_source_to_port", t_connect_source_to_port, 2);
-    rb_define_singleton_method(mCoreMIDIAPI, "disconnect_source_to_port", t_disconnect_source_to_port, 2);
+    rb_define_singleton_method(mCoreMIDIAPI, "disconnect_source_from_port", t_disconnect_source_from_port, 2);
     rb_define_singleton_method(mCoreMIDIAPI, "check_for_and_copy_new_data", t_check_for_and_copy_new_data, 0);
 
     // Define CoreMIDI::API::InputPort class
