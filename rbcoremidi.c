@@ -143,20 +143,56 @@ static VALUE t_check_for_and_copy_new_data(VALUE self)
     return Qtrue;
 }
 
-// Create a new Input Port and saves the Ruby Callback proc.
-static VALUE t_create_input_port(VALUE self, VALUE client_name, VALUE port_name, VALUE proc)
+static VALUE t_create_client(VALUE self, VALUE client_name)
 {    
+    VALUE midiclient_instance = rb_class_new_instance(0, 0, cMIDIClient);
+    if( midiclient_instance == Qnil )
+    {
+        free_objects();
+        rb_fatal("Couldn't create an instance of MIDIClient!");
+    }
+    
+    MIDIClientRef midi_client;
+    
     CFStringRef client_str = CFStringCreateWithCString(kCFAllocatorDefault, RSTRING(client_name)->ptr, kCFStringEncodingASCII);
     MIDIClientCreate(client_str, NULL, NULL, &midi_client);
     CFRelease(client_str);
     
+    RbMIDIClient* client_struct;
+    Data_Get_Struct(midiclient_instance, RbMIDIClient, client_struct);
+    
+    client_struct->client = midi_client;
+    
+    return midiclient_instance;
+}
+
+// Create a new Input Port and saves the Ruby Callback proc.
+static VALUE t_create_input_port(VALUE self, VALUE client_instance, VALUE port_name, VALUE proc)
+{
+    MIDIPortRef in_port;
+    
+    RbMIDIClient* client;
+    Data_Get_Struct(client_instance, RbMIDIClient, client);
+    
     CFStringRef port_str = CFStringCreateWithCString(kCFAllocatorDefault, RSTRING(port_name)->ptr, kCFStringEncodingASCII);
-    MIDIInputPortCreate(midi_client, port_str, RbMIDIReadProc, NULL, &inPort);
+    MIDIInputPortCreate(client->client, port_str, RbMIDIReadProc, NULL, &in_port);
     CFRelease(port_str);
     
     callback_proc = proc;
     
-    return Qtrue;
+    VALUE inputport_instance = rb_class_new_instance(0, 0, cInputPort);
+    if( inputport_instance == Qnil )
+    {
+        free_objects();
+        rb_fatal("Couldn't create an instance of InputPort!");
+    }
+    
+    RbInputPort* port_struct;
+    Data_Get_Struct(inputport_instance, RbInputPort, port_struct);
+    
+    port_struct->input_port = in_port;
+    
+    return inputport_instance;
 }
 
 // Return an array of all available sources, filled with the names of the sources
@@ -312,6 +348,7 @@ void Init_rbcoremidi()
     mCoreMIDIAPI = rb_define_module_under(mCoreMIDI, "API");
     
     rb_define_singleton_method(mCoreMIDIAPI, "create_input_port", t_create_input_port, 3);
+    rb_define_singleton_method(mCoreMIDIAPI, "create_client", t_create_client, 1);
     rb_define_singleton_method(mCoreMIDIAPI, "get_sources", t_get_sources, 0);
     rb_define_singleton_method(mCoreMIDIAPI, "get_num_sources", t_get_num_sources, 0);
     rb_define_singleton_method(mCoreMIDIAPI, "check_for_and_copy_new_data", t_check_for_and_copy_new_data, 0);
