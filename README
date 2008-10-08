@@ -5,3 +5,17 @@ it sets your house on fire, steals your car and runs over your dog and/or cat. S
 with caution.
 
 This works only with Ruby 1.8.6 that comes with OS X Leopard.
+
+= Installation
+
+  # Open rbcoremidi.xcodeproj in XCode and compile it
+  cp build/Releases/rbcoremidi.bundle . # There's an installation path in xcode to your system ruby, I don't know how to use it though
+  /usr/bin/ruby coremidi.rb             # Should exit with no errors
+
+= Common Errors
+
+  $ ruby coremidi.rb 
+  build/Release/rbcoremidi.bundle: Failed to load build/Release/rbcoremidi.bundle (LoadError)
+          from coremidi.rb:2
+
+fail, you have ruby installed in ports. Use the full path to the system ruby, like in the installation notes (/usr/bin/ruby)        
