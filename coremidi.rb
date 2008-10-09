@@ -21,7 +21,7 @@ module CoreMIDI
   def new_data?
     data = API.check_for_new_data
     
-    return nil if data.empty?
+    return nil if !data || data.empty?
     data
   end
 
