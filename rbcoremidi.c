@@ -106,7 +106,7 @@ static VALUE t_check_for_new_data(VALUE self)
     VALUE rb_midi_data = rb_ary_new();
     
     CFIndex idx = 0;
-    CFIndex array_size = CFArrayGetCount(midi_data);
+    CFIndex array_size = CFArrayGetCount(data);
     const RbMIDIPacket* current_packet = NULL;
     
     for( ; idx < array_size; ++idx ) 
