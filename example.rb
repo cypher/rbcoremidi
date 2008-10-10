@@ -11,27 +11,10 @@ require 'coremidi'
 
 # Now run this script
 
-
-class ExampleMidiConsumer
-  include CoreMIDI
-
-  def initialize
-    puts CoreMIDI.sources
-
-    # Names are arbitrary
-    client = CoreMIDI.create_client("SB")
-    port = CoreMIDI.create_input_port(client, "PortA")
-    connect_source_to_port(0, port) # 0 is index into CoreMIDI.sources array
-  end
-
-  def capture
-    while true
-     if data = new_data?
-       puts data.inspect
-     end
-   end
+midi_thread = Thread.new do
+  CoreMIDI::Input.register("Test", "Test", "Out") do |event|
+    puts event.inspect
   end
 end
 
-c = ExampleMidiConsumer.new
-c.capture
+gets # Stop on enter
