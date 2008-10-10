@@ -12,6 +12,11 @@ This works only with Ruby 1.8.6 that comes with OS X Leopard.
   cp build/Releases/rbcoremidi.bundle . # There's an installation path in xcode to your system ruby, I don't know how to use it though
   /usr/bin/ruby coremidi.rb             # Should exit with no errors
 
+  # EXPERIMENTAL - use extconf, uses whatever ruby install you want
+  ruby extconf.rb
+  make
+  ruby coremidi.rb # Should exit with no errors
+
 = Common Errors
 
   $ ruby coremidi.rb 
