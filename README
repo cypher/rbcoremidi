@@ -4,15 +4,17 @@ Please note that this is a work in progress. The code isn't tested and for all I
 it sets your house on fire, steals your car and runs over your dog and/or cat. So proceed 
 with caution.
 
-This works only with Ruby 1.8.6 that comes with OS X Leopard.
+This works only with Ruby 1.8.6 that comes with OS X Leopard if you build with Xcode.
+It should work with any Ruby when using the (experimental) extconf.rb build.
 
 = Installation
 
   # Open rbcoremidi.xcodeproj in XCode and compile it
+  # Alternatively you can use "xcodebuild" to build it from the command line
   cp build/Releases/rbcoremidi.bundle . # There's an installation path in xcode to your system ruby, I don't know how to use it though
   /usr/bin/ruby coremidi.rb             # Should exit with no errors
 
-  # EXPERIMENTAL - use extconf, uses whatever ruby install you want
+  # EXPERIMENTAL - use extconf, allows you to use whatever ruby install you want
   ruby extconf.rb
   make
   ruby coremidi.rb # Should exit with no errors
@@ -23,4 +25,4 @@ This works only with Ruby 1.8.6 that comes with OS X Leopard.
   build/Release/rbcoremidi.bundle: Failed to load build/Release/rbcoremidi.bundle (LoadError)
           from coremidi.rb:2
 
-fail, you have ruby installed in ports. Use the full path to the system ruby, like in the installation notes (/usr/bin/ruby)        
+fail, you built rbcoremidi with Xcode and have ruby installed in ports. Use the full path to the system ruby, like in the installation notes (/usr/bin/ruby)        
