@@ -1,4 +1,5 @@
 require 'rbcoremidi.bundle'
+require 'coremidi/constants'
 
 module CoreMIDI
   module API
@@ -11,12 +12,25 @@ module CoreMIDI
   end
 
   class Packet
-    attr_accessor :type, :note, :volume
+    def self.parse(data)
+      check = lambda {|byte, filter| byte & filter == filter }
+      if check[data[0], Constants::NOTE_ON]
+        if data[2] == 0
+          Events::NoteOff.new(data[0] & Constants::CHANNEL, data[1], data[2])
+        else
+          Events::NoteOn.new(data[0] & Constants::CHANNEL, data[1], data[2])
+        end
+      elsif check[data[0], Constants::NOTE_OFF]
+        Events::NoteOff.new(data[0] & Constants::CHANNEL, data[1], data[2])
+      end
+    end
+  end
 
-    def initialize(api_packet)
-      self.type     = {146 => :on, 130 => :off}[api_packet.data[0]]
-      self.note     = api_packet.data[1]
-      self.volume   = api_packet.data[2]
+  module Events
+    class NoteOn < Struct.new(:channel, :pitch, :velocity)
+    end
+
+    class NoteOff < Struct.new(:channel, :pitch, :velocity)
     end
   end
 
@@ -32,7 +46,7 @@ module CoreMIDI
         data = API.check_for_new_data
         if data && !data.empty?
           data.each do |packet|
-            yield(Packet.new(packet))
+            yield(Packet.parse(packet.data))
           end
         end
         sleep 0.001

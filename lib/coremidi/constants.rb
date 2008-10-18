@@ -1,0 +1,9 @@
+module CoreMIDI
+  module Constants
+    # http://www.srm.com/qtma/davidsmidispec.html
+    CHANNEL = 0x0F
+
+    NOTE_OFF = 0x80
+    NOTE_ON = 0x90
+  end
+end
