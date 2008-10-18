@@ -1,5 +1,7 @@
-build/
+build
 *.xcodeproj/cypher.*
+*.xcodeproj/xavier.*
 .DS_Store
 Makefile
 *.o
+mkmf.log
