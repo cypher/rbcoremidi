@@ -1,3 +1,5 @@
 build/
 *.xcodeproj/cypher.*
 .DS_Store
+Makefile
+*.o
