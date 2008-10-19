@@ -1,6 +1,4 @@
-build
-*.xcodeproj/cypher.*
-*.xcodeproj/xavier.*
+*.xcodeproj
 .DS_Store
 Makefile
 *.o
