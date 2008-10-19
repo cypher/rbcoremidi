@@ -3,16 +3,15 @@ task :build do
   Dir.chdir('ext/') do
     sh "ruby extconf.rb"
     sh "make"
-    cp "rbcoremidi.bundle", "../lib/"
+    mv "rbcoremidi.bundle", "../lib/coremidi/"
   end
 end
 
 desc "Clean build products"
 task :clean do
   Dir.chdir('ext/') do
-    rm '*.o'
-    rm 'Makefile'
-    rm 'rbcoremidi.bundle'
+    rm_f "Makefile"
+    rm_f "rbcoremidi.o"
   end
 end
 

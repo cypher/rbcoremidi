@@ -1,4 +1,4 @@
-require 'rbcoremidi.bundle'
+require 'coremidi/rbcoremidi.bundle'
 require 'coremidi/constants'
 
 module CoreMIDI
