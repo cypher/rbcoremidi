@@ -1,4 +1,4 @@
-require 'rbcoremidi.bundle'
+require File.dirname(__FILE__) + '/../ext/rbcoremidi.bundle'
 require 'coremidi/constants'
 
 module CoreMIDI
