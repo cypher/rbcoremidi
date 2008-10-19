@@ -26,3 +26,8 @@ It should work with any Ruby when using the (experimental) extconf.rb build.
           from coremidi.rb:2
 
 fail, you built rbcoremidi with Xcode and have ruby installed in ports. Use the full path to the system ruby, like in the installation notes (/usr/bin/ruby)        
+
+= Authors
+
+Markus Prinz
+Xavier Shay
