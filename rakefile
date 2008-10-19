@@ -1,3 +1,21 @@
+desc "Build the extension"
+task :build do
+  Dir.chdir('ext/') do
+    sh "ruby extconf.rb"
+    sh "make"
+    cp "rbcoremidi.bundle", "../lib/"
+  end
+end
+
+desc "Clean build products"
+task :clean do
+  Dir.chdir('ext/') do
+    rm '*.o'
+    rm 'Makefile'
+    rm 'rbcoremidi.bundle'
+  end
+end
+
 desc "Run all specs"
 task :spec do
   Dir['spec/*.rb'].reject {|f| f == 'spec/spec_helper.rb'}.each do |spec|
