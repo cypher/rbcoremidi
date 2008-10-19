@@ -26,8 +26,8 @@ spec = Gem::Specification.new do |s|
   # Uncomment this to add a dependency
   # s.add_dependency "foo"
   
-  s.require_path = Dir.glob("{lib,ext/*}")
-  s.extensions = ["ext/extconf.rb"]
+  s.require_path = 'lib'
+  s.extensions = ['ext/extconf.rb']
   s.files = %w(LICENSE README.rdoc Rakefile) + Dir.glob("{examples,ext,lib,spec}/**/*")
 end
 
