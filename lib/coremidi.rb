@@ -43,8 +43,7 @@ module CoreMIDI
       API.connect_source_to_port(API.get_sources.index(source), port)
 
       while true
-        data = API.check_for_new_data
-        if data && !data.empty?
+        API.peek do |data|
           data.each do |packet|
             yield(Packet.parse(packet.data))
           end

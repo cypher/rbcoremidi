@@ -86,8 +86,11 @@ static void RbMIDIReadProc(const MIDIPacketList* packetList, void* readProcRefCo
 }
 
 // Checks for new data and copies it over if there is some.
-static VALUE t_check_for_new_data(VALUE self)
+// TODO: Find a better name for this function
+static VALUE t_peek_data(VALUE self)
 {
+    rb_need_block();
+    
     if( pthread_mutex_trylock(&mutex) != 0 )
     {
         // no data for us yet
@@ -138,7 +141,12 @@ static VALUE t_check_for_new_data(VALUE self)
     // Free the memory! Save the whales! Part 2!
     CFRelease(data);
     
-    return rb_midi_data;
+    if( rb_funcall(rb_midi_data, rb_intern("empty?"), 0) == Qfalse )
+    {
+        rb_yield(rb_midi_data);
+    }
+    
+    return Qnil;
 }
 
 static VALUE t_create_client(VALUE self, VALUE client_name)
@@ -171,6 +179,8 @@ static VALUE t_create_input_port(VALUE self, VALUE client_instance, VALUE port_n
     
     RbMIDIClient* client;
     Data_Get_Struct(client_instance, RbMIDIClient, client);
+    
+    VALUE callback_proc = rb_block_proc();
     
     CFStringRef port_str = CFStringCreateWithCString(kCFAllocatorDefault, RSTRING(port_name)->ptr, kCFStringEncodingASCII);
     MIDIInputPortCreate(client->client, port_str, RbMIDIReadProc, NULL, &in_port);
@@ -377,7 +387,7 @@ void Init_rbcoremidi()
     rb_define_singleton_method(mCoreMIDIAPI, "get_num_sources", t_get_num_sources, 0);
     rb_define_singleton_method(mCoreMIDIAPI, "connect_source_to_port", t_connect_source_to_port, 2);
     rb_define_singleton_method(mCoreMIDIAPI, "disconnect_source_from_port", t_disconnect_source_from_port, 2);
-    rb_define_singleton_method(mCoreMIDIAPI, "check_for_new_data", t_check_for_new_data, 0);
+    rb_define_singleton_method(mCoreMIDIAPI, "peek", t_peek_data, 0);
 
     // Define CoreMIDI::API::InputPort class
     cInputPort = rb_define_class_under(mCoreMIDIAPI, "InputPort", rb_cObject);
