@@ -1,5 +1,5 @@
 require 'mkmf'
-$CPPFLAGS += " -I/Developer/SDKs/MacOSX10.5.sdk/System/Library/Frameworks/CoreMIDI.framework/Headers"
+$CPPFLAGS += " -I/System/Library/Frameworks/CoreMIDI.framework/Versions/Current/Headers"
 $LDFLAGS += " -framework CoreMIDI"
 
 create_makefile('rbcoremidi')
