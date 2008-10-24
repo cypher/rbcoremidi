@@ -46,4 +46,20 @@ describe 'Parsing MIDI events' do
       packet.velocity.should == 0x00
     end
   end
+
+  describe 'given data for a program change event' do
+    it 'creates a ProgramChange event on channel 0' do
+      packet = CoreMIDI::Packet.parse([0xC0, 0x01]) # Channel 0, Preset #1
+      packet.is_a?(CoreMIDI::Events::ProgramChange).should == true
+      packet.channel.should == 0x00
+      packet.preset.should == 0x01
+    end
+
+    it 'creates a ProgramChange event on channel 1' do
+      packet = CoreMIDI::Packet.parse([0xC1, 0x02]) # Channel 1, Preset #2
+      packet.is_a?(CoreMIDI::Events::ProgramChange).should == true
+      packet.channel.should == 0x01
+      packet.preset.should == 0x02
+    end
+  end
 end

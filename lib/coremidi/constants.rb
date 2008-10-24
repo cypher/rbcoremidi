@@ -5,5 +5,6 @@ module CoreMIDI
 
     NOTE_OFF = 0x80
     NOTE_ON = 0x90
+    PROGRAM_CHANGE = 0xC0
   end
 end

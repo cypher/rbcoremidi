@@ -16,13 +16,15 @@ module CoreMIDI
 
   class Packet
     def self.parse(data)
-      check = lambda {|byte, filter| byte & filter == filter }
+      check = lambda {|byte, filter| (byte & filter) == filter }
       if check[data[0], Constants::NOTE_ON]
         if data[2] == 0
           Events::NoteOff.new(data[0] & Constants::CHANNEL, data[1], data[2])
         else
           Events::NoteOn.new(data[0] & Constants::CHANNEL, data[1], data[2])
         end
+      elsif check[data[0], Constants::PROGRAM_CHANGE]
+        Events::ProgramChange.new(data[0] & Constants::CHANNEL, data[1])
       elsif check[data[0], Constants::NOTE_OFF]
         Events::NoteOff.new(data[0] & Constants::CHANNEL, data[1], data[2])
       end
@@ -34,6 +36,9 @@ module CoreMIDI
     end
 
     class NoteOff < Struct.new(:channel, :pitch, :velocity)
+    end
+
+    class ProgramChange < Struct.new(:channel, :preset)
     end
   end
 
