@@ -16,18 +16,20 @@ module CoreMIDI
 
   class Packet
     def self.parse(data)
-      check = lambda {|byte, filter| (byte & filter) == filter }
-      if check[data[0], Constants::NOTE_ON]
-        if data[2] == 0
-          Events::NoteOff.new(data[0] & Constants::CHANNEL, data[1], data[2])
-        else
-          Events::NoteOn.new(data[0] & Constants::CHANNEL, data[1], data[2])
-        end
-      elsif check[data[0], Constants::PROGRAM_CHANGE]
-        Events::ProgramChange.new(data[0] & Constants::CHANNEL, data[1])
-      elsif check[data[0], Constants::NOTE_OFF]
-        Events::NoteOff.new(data[0] & Constants::CHANNEL, data[1], data[2])
-      end
+      klass = {
+        Constants::NOTE_ON        => lambda {|data| (data[Events::NoteOn.members.index("velocity")] == 0) ? Events::NoteOff : Events::NoteOn },
+        Constants::NOTE_OFF       => Events::NoteOff,
+        Constants::PROGRAM_CHANGE => Events::ProgramChange
+      }.detect {|constant, klass|
+        data[0] & Constants::TYPE == constant 
+      }
+
+      raise("Unknown MIDI packet") if klass.nil? # TODO: Events::Unknown
+
+      klass = klass.last
+      klass = klass.call(data) if klass.respond_to?(:call)
+
+      klass.new(data[0] & Constants::CHANNEL, *data[1..-1])
     end
   end
 
