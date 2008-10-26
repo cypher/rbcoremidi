@@ -1,5 +1,3 @@
-$:.unshift(File.dirname(__FILE__)) unless $:.include?(File.dirname(__FILE__)) || $:.include?(File.expand_path(File.dirname(__FILE__)))
-
 require File.dirname(__FILE__) + '/../ext/rbcoremidi.bundle'
 require 'coremidi/constants'
 
@@ -23,7 +21,7 @@ module CoreMIDI
         data[0] & Constants::TYPE == constant 
       }
 
-      raise("Unknown MIDI packet") if klass.nil? # TODO: Events::Unknown
+      return Events::Unknown.new(data) if klass.nil?
 
       klass = klass.last
       klass = klass.call(data) if klass.respond_to?(:call)
@@ -33,14 +31,10 @@ module CoreMIDI
   end
 
   module Events
-    class NoteOn < Struct.new(:channel, :pitch, :velocity)
-    end
-
-    class NoteOff < Struct.new(:channel, :pitch, :velocity)
-    end
-
-    class ProgramChange < Struct.new(:channel, :preset)
-    end
+    class NoteOn        < Struct.new(:channel, :pitch, :velocity); end;
+    class NoteOff       < Struct.new(:channel, :pitch, :velocity); end;
+    class ProgramChange < Struct.new(:channel, :preset);           end; 
+    class Unknown       < Struct.new(:data);                       end;
   end
 
   class Input
