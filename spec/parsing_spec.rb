@@ -1,18 +1,18 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
-describe 'Parsing MIDI events' do
+describe 'CoreMIDI::Packet.parse' do
   def self.it_parses(data, expected)
-    describe "the event created given data #{data.inspect}" do
+    describe "given data #{data.inspect}, creates an event" do
       before(:each) do  
         @packet = CoreMIDI::Packet.parse(data)
       end
 
-      it "is of type #{expected.class}" do
+      it "of type #{expected.class}" do
         @packet.class.should == expected.class
       end
 
       expected.members.each do |member|
-        it "has a #{member} of #{expected.send(member)}" do
+        it "that has a #{member} of #{expected.send(member).inspect}" do
           @packet.send(member).should == expected.send(member)
         end
       end
@@ -28,6 +28,10 @@ describe 'Parsing MIDI events' do
 
   # This is technically a NoteOn event, but convention uses it most often in place of a note off event (setting velocity to 0)
   it_parses([0x90, 0x3C, 0x00], CoreMIDI::Events::NoteOff.new(0x00, 0x3C, 0x00))  # Channel 0, Middle C, no velocity
+
+  describe 'when data does not match a known MIDI event,' do
+    it_parses([0xFF, 0xFF], CoreMIDI::Events::Unknown.new([0xFF, 0xFF]))
+  end
 
   it 'creates a NoteOn event when status byte was provided by the last packet'
 end

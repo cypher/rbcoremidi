@@ -24,7 +24,7 @@ module CoreMIDI
         data[0] & Constants::TYPE == constant 
       }
 
-      raise("Unknown MIDI packet") if klass.nil? # TODO: Events::Unknown
+      return Events::Unknown.new(data) if klass.nil?
 
       klass = klass.last
       klass = klass.call(data) if klass.respond_to?(:call)
@@ -41,6 +41,9 @@ module CoreMIDI
     end
 
     class ProgramChange < Struct.new(:channel, :preset)
+    end
+
+    class Unknown < Struct.new(:data)
     end
   end
 
