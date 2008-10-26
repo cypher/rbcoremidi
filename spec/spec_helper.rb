@@ -1,4 +1,5 @@
-require 'spec'
-$LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__) + '/../lib'))
+$TESTING=true
+$:.push File.join(File.dirname(__FILE__), '..', 'lib')
 
 require 'coremidi'
+require 'spec'

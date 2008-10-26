@@ -1,49 +1,33 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe 'Parsing MIDI events' do
-  describe 'given data for a note on event' do
-    it 'creates a NoteOn event on channel 0' do
-      packet = CoreMIDI::Packet.parse([0x90, 0x3C, 0x40]) # Channel 0, Middle C, half velocity
-      packet.is_a?(CoreMIDI::Events::NoteOn).should == true
-      packet.channel.should == 0x00
-      packet.pitch.should == 0x3C
-      packet.velocity.should == 0x40
-    end
+  def self.it_parses(data, expected)
+    describe "the event created given data #{data.inspect}" do
+      before(:each) do  
+        @packet = CoreMIDI::Packet.parse(data)
+      end
 
-    it 'creates a NoteOn event on channel 1' do
-      packet = CoreMIDI::Packet.parse([0x91, 0x3C, 0x40]) # Channel 0, Middle C, half velocity
-      packet.is_a?(CoreMIDI::Events::NoteOn).should == true
-      packet.channel.should == 0x01
-      packet.pitch.should == 0x3C
-      packet.velocity.should == 0x40
-    end
+      it "is of type #{expected.class}" do
+        @packet.class.should == expected.class
+      end
 
-    it 'creates a NoteOn event when status byte was provided by the last packet'
-  end
-
-  describe 'given data for a note off event' do
-    it 'creates a NoteOff event on channel 0' do
-      packet = CoreMIDI::Packet.parse([0x80, 0x3C, 0x40]) # Channel 0, Middle C, half velocity
-      packet.is_a?(CoreMIDI::Events::NoteOff).should == true
-      packet.channel.should == 0x00
-      packet.pitch.should == 0x3C
-      packet.velocity.should == 0x40
-    end
-
-    it 'creates a NoteOff event on channel 1' do
-      packet = CoreMIDI::Packet.parse([0x81, 0x3C, 0x40]) # Channel 0, Middle C, half velocity
-      packet.is_a?(CoreMIDI::Events::NoteOff).should == true
-      packet.channel.should == 0x01
-      packet.pitch.should == 0x3C
-      packet.velocity.should == 0x40
-    end
-
-    it 'creates a NoteOff event for data that is actually NoteOn with volume 0' do
-      packet = CoreMIDI::Packet.parse([0x90, 0x3C, 0x00]) # Channel 0, Middle C, half velocity
-      packet.is_a?(CoreMIDI::Events::NoteOff).should == true
-      packet.channel.should == 0x00
-      packet.pitch.should == 0x3C
-      packet.velocity.should == 0x00
+      expected.members.each do |member|
+        it "has a #{member} of #{expected.send(member)}" do
+          @packet.send(member).should == expected.send(member)
+        end
+      end
     end
   end
+
+  it_parses([0x90, 0x3C, 0x40], CoreMIDI::Events::NoteOn.new(0x00, 0x3C, 0x40)) # Channel 0, Middle C, half velocity
+  it_parses([0x91, 0x3C, 0x40], CoreMIDI::Events::NoteOn.new(0x01, 0x3C, 0x40)) # Channel 1, Middle C, half velocity
+  it_parses([0x80, 0x3C, 0x40], CoreMIDI::Events::NoteOff.new(0x00, 0x3C, 0x40)) # Channel 0, Middle C, half velocity
+  it_parses([0x81, 0x3C, 0x40], CoreMIDI::Events::NoteOff.new(0x01, 0x3C, 0x40))  # Channel 1, Middle C, half velocity
+  it_parses([0xC0, 0x01], CoreMIDI::Events::ProgramChange.new(0x00, 0x01)) # Channel 0, Preset #1
+  it_parses([0xC1, 0x02], CoreMIDI::Events::ProgramChange.new(0x01, 0x02)) # Channel 1, Preset #2
+
+  # This is technically a NoteOn event, but convention uses it most often in place of a note off event (setting velocity to 0)
+  it_parses([0x90, 0x3C, 0x00], CoreMIDI::Events::NoteOff.new(0x00, 0x3C, 0x00))  # Channel 0, Middle C, no velocity
+
+  it 'creates a NoteOn event when status byte was provided by the last packet'
 end

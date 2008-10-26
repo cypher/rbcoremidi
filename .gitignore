@@ -3,3 +3,6 @@
 Makefile
 *.o
 mkmf.log
+pkg
+coverage
+*.bundle
