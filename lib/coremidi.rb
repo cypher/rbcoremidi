@@ -34,17 +34,10 @@ module CoreMIDI
   end
 
   module Events
-    class NoteOn < Struct.new(:channel, :pitch, :velocity)
-    end
-
-    class NoteOff < Struct.new(:channel, :pitch, :velocity)
-    end
-
-    class ProgramChange < Struct.new(:channel, :preset)
-    end
-
-    class Unknown < Struct.new(:data)
-    end
+    class NoteOn        < Struct.new(:channel, :pitch, :velocity); end;
+    class NoteOff       < Struct.new(:channel, :pitch, :velocity); end;
+    class ProgramChange < Struct.new(:channel, :preset);           end; 
+    class Unknown       < Struct.new(:data);                       end;
   end
 
   class Input
