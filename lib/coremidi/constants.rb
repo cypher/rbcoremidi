@@ -6,6 +6,7 @@ module CoreMIDI
 
     NOTE_OFF       = 0x80
     NOTE_ON        = 0x90
+    KEY_PRESSURE   = 0xA0
     PROGRAM_CHANGE = 0xC0
   end
 end
