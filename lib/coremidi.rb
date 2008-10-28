@@ -16,6 +16,7 @@ module CoreMIDI
       klass = {
         Constants::NOTE_ON        => lambda {|data| (data[Events::NoteOn.members.index("velocity")] == 0) ? Events::NoteOff : Events::NoteOn },
         Constants::NOTE_OFF       => Events::NoteOff,
+        Constants::KEY_PRESSURE   => Events::KeyPressure,
         Constants::PROGRAM_CHANGE => Events::ProgramChange
       }.detect {|constant, klass|
         data[0] & Constants::TYPE == constant 
@@ -33,6 +34,7 @@ module CoreMIDI
   module Events
     class NoteOn        < Struct.new(:channel, :pitch, :velocity); end;
     class NoteOff       < Struct.new(:channel, :pitch, :velocity); end;
+    class KeyPressure   < Struct.new(:channel, :pitch, :pressure); end;
     class ProgramChange < Struct.new(:channel, :preset);           end; 
     class Unknown       < Struct.new(:data);                       end;
   end
